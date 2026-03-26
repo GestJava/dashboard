@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="3600">
+  <title>Command Center — Dashboard Video Wall</title>
+  <meta name="description" content="Dashboard Command Center terintegrasi untuk mengelola dua Video Wall secara bersamaan.">
+  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%96%A5%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E">
+</head>
+<body>
+
+  <!-- ========== Header Bar ========== -->
+  <header class="header-bar">
+    <div class="header-left">
+      <div class="header-logo">
+        <img src="padang-logo.svg" alt="Logo Kota Padang" class="padang-logo">
+      </div>
+      <div class="header-title-wrapper">
+        <h1 class="header-title">PADANG COMMAND CENTER</h1>
+        <span class="title-divider">—</span>
+        <div class="siaga-badge">
+          <span class="pulse-dot"></span> SIAGA 112
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-status">
+        <span class="status-dot"></span>
+        <span id="activeCount">0 Active</span>
+      </div>
+      <div class="header-clock" id="liveClock">--:--:--</div>
+      <button class="btn" id="fullscreenBtn" title="Toggle Fullscreen">
+        <span class="btn-icon">⛶</span> Fullscreen
+      </button>
+
+      <button class="btn" id="globalRefreshBtn" title="Refresh All Iframes">
+        <span class="btn-icon">🔄</span> Refresh All
+      </button>
+      <button class="btn btn-primary" id="openAdminBtn" title="Open Admin Panel">
+        <span class="btn-icon">⚙️</span> Admin Panel
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== Tab Navigation ========== -->
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="wallA" onclick="switchTab('wallA')">
+      <span class="tab-icon">🖥️</span>
+      <span class="tab-label">Wall A</span>
+      <span class="tab-desc">Utama — 5×3 Grid</span>
+    </button>
+    <button class="tab-btn" data-tab="wallB" onclick="switchTab('wallB')">
+      <span class="tab-icon">📺</span>
+      <span class="tab-label">Wall B</span>
+      <span class="tab-desc">Pendamping — 3×2 Grid</span>
+    </button>
+    <button class="tab-btn" data-tab="wallC" onclick="switchTab('wallC')">
+      <span class="tab-icon">✨</span>
+      <span class="tab-label">Wall C</span>
+      <span class="tab-desc">Utama Baru — 2×1 Grid</span>
+    </button>
+  </nav>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content">
+    <div class="walls-container">
+
+      <!-- Wall A (5x3, 15 Monitors) -->
+      <section class="wall-section wall-section-a tab-panel active" id="tabPanelWallA" data-tab="wallA">
+        <div class="wall-label">
+          <span class="wall-label-badge wall-a">Wall A</span>
+          <span class="wall-label-text">Utama — 15 Monitor (5×3 Grid)</span>
+        </div>
+        <div class="wall-a-grid" id="wallAGrid">
+          <!-- Slot 1: Col 1, Row 1-2 (Main App) -->
+          <div class="monitor-slot slot-main" id="WallA-Slot1" data-slot="WallA-Slot1">
+            <div class="slot-header">
+              <span class="slot-id">A1 — App</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot1')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallA-Slot1</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 2: Col 2, Row 1-2 (Main App) -->
+          <div class="monitor-slot slot-main" id="WallA-Slot2" data-slot="WallA-Slot2">
+            <div class="slot-header">
+              <span class="slot-id">A2 — App</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot2')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallA-Slot2</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 3: Col 3, Row 1-3 (GIS Center) -->
+          <div class="monitor-slot slot-center" id="WallA-Slot3" data-slot="WallA-Slot3">
+            <div class="slot-header">
+              <span class="slot-id">A3 — GIS / Peta</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot3')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">🗺️</div>
+                <div class="slot-placeholder-text">WallA-Slot3 (Peta/GIS)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 4: Col 4, Row 1-2 (Main App) -->
+          <div class="monitor-slot slot-main" id="WallA-Slot4" data-slot="WallA-Slot4">
+            <div class="slot-header">
+              <span class="slot-id">A4 — App</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot4')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallA-Slot4</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 5: Col 5, Row 1-2 (Main App) -->
+          <div class="monitor-slot slot-main" id="WallA-Slot5" data-slot="WallA-Slot5">
+            <div class="slot-header">
+              <span class="slot-id">A5 — App</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot5')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallA-Slot5</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 6: Col 1, Row 3 (Log/Stats) -->
+          <div class="monitor-slot" id="WallA-Slot6" data-slot="WallA-Slot6">
+            <div class="slot-header">
+              <span class="slot-id">A6 — Log</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot6')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📊</div>
+                <div class="slot-placeholder-text">WallA-Slot6 (Statistik)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 7: Col 2, Row 3 (Log/Stats) -->
+          <div class="monitor-slot" id="WallA-Slot7" data-slot="WallA-Slot7">
+            <div class="slot-header">
+              <span class="slot-id">A7 — Log</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot7')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📊</div>
+                <div class="slot-placeholder-text">WallA-Slot7 (Statistik)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note: Col 3 Row 3 is taken by slot-center (A3 GIS spanning 3 rows) -->
+
+          <!-- Slot 8: Col 4, Row 3 (Log/Stats) -->
+          <div class="monitor-slot" id="WallA-Slot8" data-slot="WallA-Slot8">
+            <div class="slot-header">
+              <span class="slot-id">A8 — Log</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot8')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📊</div>
+                <div class="slot-placeholder-text">WallA-Slot8 (Statistik)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 9: Col 5, Row 3 (Log/Stats) -->
+          <div class="monitor-slot" id="WallA-Slot9" data-slot="WallA-Slot9">
+            <div class="slot-header">
+              <span class="slot-id">A9 — Log</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallA-Slot9')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📊</div>
+                <div class="slot-placeholder-text">WallA-Slot9 (Statistik)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Wall B (3x2, 6 Monitors) -->
+      <section class="wall-section wall-section-b tab-panel" id="tabPanelWallB" data-tab="wallB">
+        <div class="wall-label">
+          <span class="wall-label-badge wall-b">Wall B</span>
+          <span class="wall-label-text">Pendamping — 6 Monitor (3×2 Grid)</span>
+        </div>
+        <div class="wall-b-grid" id="wallBGrid">
+          <!-- Slot 1: Col 1, Row 1-2 (Full Height) -->
+          <div class="monitor-slot slot-tall" id="WallB-Slot1" data-slot="WallB-Slot1">
+            <div class="slot-header">
+              <span class="slot-id">B1</span>
+              <div class="slot-actions">
+                <div class="carousel-indicator" id="carousel-WallB-Slot1"></div>
+                <button class="slot-action-btn" onclick="refreshSlot('WallB-Slot1')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallB-Slot1</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 2: Col 2, Row 1-2 (Full Height) -->
+          <div class="monitor-slot slot-tall" id="WallB-Slot2" data-slot="WallB-Slot2">
+            <div class="slot-header">
+              <span class="slot-id">B2</span>
+              <div class="slot-actions">
+                <div class="carousel-indicator" id="carousel-WallB-Slot2"></div>
+                <button class="slot-action-btn" onclick="refreshSlot('WallB-Slot2')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallB-Slot2</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 3: Col 3, Row 1-2 (Full Height) -->
+          <div class="monitor-slot slot-tall" id="WallB-Slot3" data-slot="WallB-Slot3">
+            <div class="slot-header">
+              <span class="slot-id">B3</span>
+              <div class="slot-actions">
+                <div class="carousel-indicator" id="carousel-WallB-Slot3"></div>
+                <button class="slot-action-btn" onclick="refreshSlot('WallB-Slot3')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallB-Slot3</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Wall C (2x1, 2 Monitors) -->
+      <section class="wall-section wall-section-c tab-panel" id="tabPanelWallC" data-tab="wallC">
+        <div class="wall-label">
+          <span class="wall-label-badge wall-c">Wall C</span>
+          <span class="wall-label-text">Utama Baru — 2 Monitor (2×1 Grid)</span>
+        </div>
+        <div class="wall-c-grid" id="wallCGrid">
+          <!-- Slot 1: Col 1, Full Height -->
+          <div class="monitor-slot slot-tall" id="WallC-Slot1" data-slot="WallC-Slot1">
+            <div class="slot-header">
+              <span class="slot-id">C1 — App</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallC-Slot1')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallC-Slot1</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 2: Col 2, Full Height -->
+          <div class="monitor-slot slot-tall" id="WallC-Slot2" data-slot="WallC-Slot2">
+            <div class="slot-header">
+              <span class="slot-id">C2 — App</span>
+              <div class="slot-actions">
+                <button class="slot-action-btn" onclick="refreshSlot('WallC-Slot2')" title="Refresh">↻</button>
+              </div>
+            </div>
+            <div class="slot-content">
+              <div class="slot-placeholder">
+                <div class="slot-placeholder-icon">📺</div>
+                <div class="slot-placeholder-text">WallC-Slot2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========== Admin Panel Overlay ========== -->
+  <div class="admin-overlay" id="adminOverlay"></div>
+
+  <!-- ========== Admin Panel ========== -->
+  <aside class="admin-panel" id="adminPanel">
+    <div class="admin-panel-header">
+      <span class="admin-panel-title">⚙️ Admin Panel Central</span>
+      <button class="admin-close-btn" id="closeAdminBtn" title="Close">✕</button>
+    </div>
+
+    <div class="admin-panel-body">
+      <!-- Proxy info banner -->
+      <div class="proxy-banner">
+        <span class="proxy-banner-icon">💡</span>
+        <div class="proxy-banner-text">
+          Untuk bypass <strong>X-Frame-Options</strong>, jalankan proxy server:
+          <code>node proxy-server.js</code> lalu gunakan URL
+          <code>http://localhost:3001/proxy?url=TARGET_URL</code>
+        </div>
+      </div>
+
+      <!-- Wall A Configuration -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <span class="admin-section-icon">🖥️</span>
+          <span class="admin-section-title">Wall A — Utama (5×3)</span>
+        </div>
+
+        <!-- A1-A5: Main App slots -->
+        <div class="slot-config" data-config="WallA-Slot1">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot1 (App)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot1">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot1" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot1')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot1')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot1" min="100" max="300" value="100" oninput="setZoom('WallA-Slot1', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot1">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallA-Slot2">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot2 (App)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot2">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot2" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot2')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot2')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot2" min="100" max="300" value="100" oninput="setZoom('WallA-Slot2', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot2">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallA-Slot3">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot3 (GIS/Peta)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot3">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot3" placeholder="https://maps.example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot3')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot3')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot3" min="100" max="300" value="100" oninput="setZoom('WallA-Slot3', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot3">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallA-Slot4">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot4 (App)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot4">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot4" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot4')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot4')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot4" min="100" max="300" value="100" oninput="setZoom('WallA-Slot4', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot4">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallA-Slot5">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot5 (App)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot5">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot5" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot5')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot5')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot5" min="100" max="300" value="100" oninput="setZoom('WallA-Slot5', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot5">100%</span>
+          </div>
+        </div>
+
+        <!-- A6-A9: Log/Stats slots -->
+        <div class="slot-config" data-config="WallA-Slot6">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot6 (Log)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot6">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot6" placeholder="https://stats.example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot6')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot6')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot6" min="100" max="300" value="100" oninput="setZoom('WallA-Slot6', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot6">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallA-Slot7">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot7 (Log)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot7">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot7" placeholder="https://stats.example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot7')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot7')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot7" min="100" max="300" value="100" oninput="setZoom('WallA-Slot7', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot7">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallA-Slot8">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot8 (Log)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot8">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot8" placeholder="https://stats.example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot8')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot8')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot8" min="100" max="300" value="100" oninput="setZoom('WallA-Slot8', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot8">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallA-Slot9">
+          <div class="slot-config-header">
+            <span class="slot-config-label">WallA-Slot9 (Log)</span>
+            <span class="slot-config-status inactive" id="status-WallA-Slot9">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallA-Slot9" placeholder="https://stats.example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallA-Slot9')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallA-Slot9')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallA-Slot9" min="100" max="300" value="100" oninput="setZoom('WallA-Slot9', this.value)">
+            <span class="zoom-value" id="zoomVal-WallA-Slot9">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wall B Configuration -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <span class="admin-section-icon">📺</span>
+          <span class="admin-section-title">Wall B — Pendamping (3×2)</span>
+        </div>
+
+        <div class="slot-config" data-config="WallB-Slot1">
+          <div class="slot-config-header">
+            <span class="slot-config-label wall-b-label">WallB-Slot1</span>
+            <span class="slot-config-status inactive" id="status-WallB-Slot1">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallB-Slot1" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallB-Slot1')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallB-Slot1')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallB-Slot1" min="100" max="300" value="100" oninput="setZoom('WallB-Slot1', this.value)">
+            <span class="zoom-value" id="zoomVal-WallB-Slot1">100%</span>
+          </div>
+          <!-- Carousel config -->
+          <div class="carousel-urls-wrapper">
+            <div class="carousel-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" id="carousel-toggle-WallB-Slot1" onchange="toggleCarousel('WallB-Slot1', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+              <label for="carousel-toggle-WallB-Slot1">Auto-Rotation (60s)</label>
+            </div>
+            <div class="carousel-url-list" id="carousel-urls-WallB-Slot1" style="display:none;">
+              <!-- Carousel URLs will be added dynamically -->
+            </div>
+            <button class="carousel-add-btn" id="carousel-add-WallB-Slot1" style="display:none;" onclick="addCarouselUrl('WallB-Slot1')">+ Tambah URL Rotasi</button>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallB-Slot2">
+          <div class="slot-config-header">
+            <span class="slot-config-label wall-b-label">WallB-Slot2</span>
+            <span class="slot-config-status inactive" id="status-WallB-Slot2">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallB-Slot2" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallB-Slot2')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallB-Slot2')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallB-Slot2" min="100" max="300" value="100" oninput="setZoom('WallB-Slot2', this.value)">
+            <span class="zoom-value" id="zoomVal-WallB-Slot2">100%</span>
+          </div>
+          <div class="carousel-urls-wrapper">
+            <div class="carousel-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" id="carousel-toggle-WallB-Slot2" onchange="toggleCarousel('WallB-Slot2', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+              <label for="carousel-toggle-WallB-Slot2">Auto-Rotation (60s)</label>
+            </div>
+            <div class="carousel-url-list" id="carousel-urls-WallB-Slot2" style="display:none;"></div>
+            <button class="carousel-add-btn" id="carousel-add-WallB-Slot2" style="display:none;" onclick="addCarouselUrl('WallB-Slot2')">+ Tambah URL Rotasi</button>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallB-Slot3">
+          <div class="slot-config-header">
+            <span class="slot-config-label wall-b-label">WallB-Slot3</span>
+            <span class="slot-config-status inactive" id="status-WallB-Slot3">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallB-Slot3" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallB-Slot3')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallB-Slot3')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallB-Slot3" min="100" max="300" value="100" oninput="setZoom('WallB-Slot3', this.value)">
+            <span class="zoom-value" id="zoomVal-WallB-Slot3">100%</span>
+          </div>
+          <div class="carousel-urls-wrapper">
+            <div class="carousel-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" id="carousel-toggle-WallB-Slot3" onchange="toggleCarousel('WallB-Slot3', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+              <label for="carousel-toggle-WallB-Slot3">Auto-Rotation (60s)</label>
+            </div>
+            <div class="carousel-url-list" id="carousel-urls-WallB-Slot3" style="display:none;"></div>
+            <button class="carousel-add-btn" id="carousel-add-WallB-Slot3" style="display:none;" onclick="addCarouselUrl('WallB-Slot3')">+ Tambah URL Rotasi</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wall C Settings -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <span class="admin-section-icon">✨</span>
+          <span class="admin-section-title">Konfigurasi Wall C (2×1)</span>
+        </div>
+
+        <div class="slot-config" data-config="WallC-Slot1">
+          <div class="slot-config-header">
+            <span class="slot-config-label wall-c-label">WallC-Slot1</span>
+            <span class="slot-config-status inactive" id="status-WallC-Slot1">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallC-Slot1" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallC-Slot1')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallC-Slot1')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallC-Slot1" min="100" max="300" value="100" oninput="setZoom('WallC-Slot1', this.value)">
+            <span class="zoom-value" id="zoomVal-WallC-Slot1">100%</span>
+          </div>
+        </div>
+
+        <div class="slot-config" data-config="WallC-Slot2">
+          <div class="slot-config-header">
+            <span class="slot-config-label wall-c-label">WallC-Slot2</span>
+            <span class="slot-config-status inactive" id="status-WallC-Slot2">Inactive</span>
+          </div>
+          <div class="input-group">
+            <label>URL</label>
+            <input type="url" class="input-url" id="url-WallC-Slot2" placeholder="https://example.com">
+            <button class="input-btn apply-btn" onclick="applyUrl('WallC-Slot2')">Apply</button>
+            <button class="input-btn" onclick="clearSlot('WallC-Slot2')" title="Clear">✕</button>
+          </div>
+          <div class="zoom-control">
+            <label>Zoom</label>
+            <input type="range" class="zoom-slider" id="zoom-WallC-Slot2" min="100" max="300" value="100" oninput="setZoom('WallC-Slot2', this.value)">
+            <span class="zoom-value" id="zoomVal-WallC-Slot2">100%</span>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+
+    <!-- Admin Panel Footer -->
+    <div class="admin-panel-footer">
+      <button class="btn" onclick="saveAllConfig()">
+        <span class="btn-icon">💾</span> Save All
+      </button>
+      <button class="btn" onclick="loadAllConfig()">
+        <span class="btn-icon">📥</span> Load Saved
+      </button>
+      <button class="btn btn-danger" onclick="resetAllConfig()">
+        <span class="btn-icon">🗑️</span> Reset
+      </button>
+    </div>
+  </aside>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>
