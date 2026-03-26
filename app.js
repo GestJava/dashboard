@@ -380,19 +380,7 @@
     showToast('All slots refreshed', 'success');
   });
 
-  // ─── Emergency Mode ───────────────────────────
 
-
-  window.applyEmergencyUrl = function () {
-    const input = document.getElementById('url-emergency');
-    if (!input) return;
-    state.emergency.url = input.value.trim();
-    saveConfig();
-    if (state.emergency.active) {
-      applyEmergencyMode();
-    }
-    showToast('Emergency URL saved', 'warning');
-  };
 
   // ─── Carousel / Auto-Rotation ─────────────────
   window.toggleCarousel = function (slotId, enabled) {
@@ -482,7 +470,6 @@
     if (indicator) indicator.classList.add('active');
 
     carouselTimers[slotId] = setInterval(() => {
-      if (state.emergency.active) return;
 
       carousel.currentIndex = (carousel.currentIndex + 1) % validUrls.length;
       const nextUrl = validUrls[carousel.currentIndex];
@@ -553,6 +540,9 @@
             }
           });
         }
+        if (parsed.emergency) {
+          state.emergency = { ...state.emergency, ...parsed.emergency };
+        }
       }
     } catch (e) {
       console.warn('Failed to load config:', e);
@@ -577,14 +567,7 @@
       }
     });
 
-    // Apply emergency config
-    const emergInput = document.getElementById('url-emergency');
-    if (emergInput && state.emergency.url) {
-      emergInput.value = state.emergency.url;
-    }
-    if (state.emergency.active) {
-      applyEmergencyMode();
-    }
+
 
     // Apply carousel config
     WALL_B_SLOTS.forEach(id => {
@@ -661,10 +644,7 @@
       if (addBtn) addBtn.style.display = 'none';
     });
 
-    const emergInput = document.getElementById('url-emergency');
-    if (emergInput) emergInput.value = '';
 
-    wallBGrid.classList.remove('emergency-mode');
 
     localStorage.removeItem(STORAGE_KEY);
     showToast('All configurations reset', 'warning');
@@ -682,11 +662,7 @@
       e.preventDefault();
       openAdmin();
     }
-    // Ctrl+Shift+E for emergency toggle
-    if (e.ctrlKey && e.shiftKey && e.key === 'E') {
-      e.preventDefault();
 
-    }
     // Ctrl+Shift+R for global refresh
     if (e.ctrlKey && e.shiftKey && e.key === 'R') {
       e.preventDefault();
@@ -747,6 +723,13 @@
     document.querySelectorAll('.slot-content').forEach(el => {
       el.style.transition = 'opacity 0.5s ease';
     });
+
+    // Auto-detect proxy URL hint
+    const proxyHint = document.getElementById('proxyUrlHint');
+    if (proxyHint) {
+      const host = window.location.hostname;
+      proxyHint.textContent = `http://${host}:3001/proxy?url=TARGET_URL`;
+    }
 
     console.log('%c🖥️ Command Center initialized', 'color: #38bdf8; font-weight: bold; font-size: 14px');
   }
